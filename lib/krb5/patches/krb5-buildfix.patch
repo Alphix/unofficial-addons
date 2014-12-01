@@ -1,0 +1,63 @@
+diff --git a/Makefile.in b/Makefile.in
+index 60a17d9..df932c7 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -7,22 +7,7 @@ mydir=.
+ #	plugins/preauth/wpse
+ #	plugins/preauth/cksum_body
+ #	plugins/authdata/greet
+-SUBDIRS=util include lib \
+-	@sam2_plugin@ \
+-	plugins/audit \
+-	plugins/audit/test \
+-	@audit_plugin@ \
+-	plugins/kadm5_hook/test \
+-	plugins/hostrealm/test \
+-	plugins/localauth/test \
+-	plugins/pwqual/test \
+-	plugins/kdb/db2 \
+-	@ldap_plugin_dir@ \
+-	plugins/preauth/otp \
+-	plugins/preauth/pkinit \
+-	plugins/tls/k5tls \
+-	kdc kadmin slave clients appl tests \
+-	config-files build-tools man doc @po@
++SUBDIRS=util include lib build-tools
+ WINSUBDIRS=include util lib ccapi windows clients appl
+ BUILDTOP=$(REL).
+ 
+diff --git a/lib/krad/packet.c b/lib/krad/packet.c
+index c597174..717edae 100644
+--- a/lib/krad/packet.c
++++ b/lib/krad/packet.c
+@@ -253,7 +253,7 @@ krad_packet_new_request(krb5_context ctx, const char *secret, krad_code code,
+ {
+     krb5_error_code retval;
+     krad_packet *pkt;
+-    uchar id;
++    uchar id = 0;
+     size_t attrset_len;
+ 
+     pkt = packet_new();
+diff --git a/lib/krb5/ccache/cc_file.c b/lib/krb5/ccache/cc_file.c
+index 38c0400..ca7400f 100644
+--- a/lib/krb5/ccache/cc_file.c
++++ b/lib/krb5/ccache/cc_file.c
+@@ -401,7 +401,7 @@ read_principal(krb5_context context, krb5_ccache id, krb5_principal *princ)
+ {
+     krb5_error_code ret;
+     struct k5buf buf;
+-    size_t maxsize;
++    size_t maxsize = 0;
+ 
+     *princ = NULL;
+     k5_cc_mutex_assert_locked(context, &((fcc_data *)id->data)->lock);
+@@ -1088,7 +1088,7 @@ fcc_next_cred(krb5_context context, krb5_ccache id, krb5_cc_cursor *cursor,
+     krb5_fcc_cursor *fcursor = *cursor;
+     fcc_data *data = id->data;
+     struct k5buf buf;
+-    size_t maxsize;
++    size_t maxsize = 0;
+ 
+     memset(creds, 0, sizeof(*creds));
+     k5_cc_mutex_lock(context, &data->lock);
