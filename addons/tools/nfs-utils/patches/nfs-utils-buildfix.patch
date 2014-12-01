@@ -1,0 +1,110 @@
+diff --git a/configure.ac b/configure.ac
+index 59fd14d..6f87d79 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -109,7 +109,7 @@ AC_ARG_ENABLE(svcgss,
+ 	enable_svcgss=$enableval,
+ 	enable_svcgss=yes)
+ 	if test "$enable_gss" = yes; then
+-		if "enable_svcgss" = yes; then
++		if test "$enable_svcgss" = yes; then
+ 			SVCGSSD=svcgssd
+ 		fi
+ 	else
+@@ -481,6 +481,9 @@ my_am_cflags="-Wall -Wextra -Wstrict-prototypes $ARCHFLAGS -pipe"
+ 
+ AC_SUBST([AM_CFLAGS], ["$my_am_cflags"])
+ 
++AM_CPPFLAGS="$AM_CPPFLAGS -I\$(top_srcdir)/support/include"
++AC_SUBST([AM_CPPFLAGS])
++
+ # Make sure that $ACLOCAL_FLAGS are used during a rebuild
+ AC_SUBST([ACLOCAL_AMFLAGS], ["-I $ac_macro_dir \$(ACLOCAL_FLAGS)"])
+ 
+diff --git a/tools/Makefile.am b/tools/Makefile.am
+index f2ce282..6c0f4c0 100644
+--- a/tools/Makefile.am
++++ b/tools/Makefile.am
+@@ -6,6 +6,6 @@ if CONFIG_RPCGEN
+ OPTDIRS += rpcgen
+ endif
+ 
+-SUBDIRS = locktest rpcdebug nlmtest mountstats nfs-iostat $(OPTDIRS)
++SUBDIRS = $(OPTDIRS)
+ 
+ MAINTAINERCLEANFILES = Makefile.in
+diff --git a/tools/rpcgen/rpc_main.c b/tools/rpcgen/rpc_main.c
+index 28aa60c..f81da47 100644
+--- a/tools/rpcgen/rpc_main.c
++++ b/tools/rpcgen/rpc_main.c
+@@ -44,6 +44,7 @@ static char sccsid[] = "@(#)rpc_main.c 1.30 89/03/30 (C) 1987 SMI";
+ #include <unistd.h>
+ #include <ctype.h>
+ #include <errno.h>
++#include <libgen.h>
+ #include "rpc_parse.h"
+ #include "rpc_util.h"
+ #include "rpc_scan.h"
+@@ -389,7 +390,7 @@ c_output(char *infile, char *define, int extend, char *outfile)
+ 	open_output(infile, outfilename);
+ 	add_warning();
+ 	if (infile && (include = extendfile(infile, ".h"))) {
+-		f_print(fout, "#include \"%s\"\n", include);
++		f_print(fout, "#include \"%s\"\n", basename(include));
+ 		free(include);
+ 		/* .h file already contains rpc/rpc.h */
+ 	} else
+@@ -523,7 +524,7 @@ s_output(int argc, char **argv, char *infile, char *define, int extend,
+ 	open_output(infile, outfilename);
+ 	add_warning();
+ 	if (infile && (include = extendfile(infile, ".h"))) {
+-		f_print(fout, "#include \"%s\"\n", include);
++		f_print(fout, "#include \"%s\"\n", basename(include));
+ 		free(include);
+ 	} else
+ 	  f_print(fout, "#include <rpc/rpc.h>\n");
+@@ -630,7 +631,7 @@ l_output(char *infile, char *define, int extend, char *outfile)
+ 	if (Cflag)
+ 	  f_print (fout, "#include <memory.h> /* for memset */\n");
+ 	if (infile && (include = extendfile(infile, ".h"))) {
+-		f_print(fout, "#include \"%s\"\n", include);
++		f_print(fout, "#include \"%s\"\n", basename(include));
+ 		free(include);
+ 	} else
+ 	  f_print(fout, "#include <rpc/rpc.h>\n");
+diff --git a/utils/Makefile.am b/utils/Makefile.am
+index b892dc8..73262be 100644
+--- a/utils/Makefile.am
++++ b/utils/Makefile.am
+@@ -25,14 +25,6 @@ if CONFIG_NFSDCLTRACK
+ OPTDIRS += nfsdcltrack
+ endif
+ 
+-SUBDIRS = \
+-	exportfs \
+-	mountd \
+-	nfsd \
+-	nfsstat \
+-	showmount \
+-	statd \
+-	osd_login \
+-	$(OPTDIRS)
++SUBDIRS = $(OPTDIRS)
+ 
+ MAINTAINERCLEANFILES = Makefile.in
+diff --git a/utils/gssd/Makefile.am b/utils/gssd/Makefile.am
+index 9835117..be54de1 100644
+--- a/utils/gssd/Makefile.am
++++ b/utils/gssd/Makefile.am
+@@ -46,8 +46,9 @@ gssd_SOURCES = \
+ 	write_bytes.h
+ 
+ gssd_LDADD =	../../support/nfs/libnfs.a \
+-		$(RPCSECGSS_LIBS) $(KRBLIBS) $(GSSAPI_LIBS)
+-gssd_LDFLAGS = $(KRBLDFLAGS) $(LIBTIRPC)
++		$(RPCSECGSS_LIBS) $(KRBLIBS) $(GSSAPI_LIBS) $(LIBTIRPC)
++
++gssd_LDFLAGS = $(KRBLDFLAGS)
+ 
+ gssd_CFLAGS = $(AM_CFLAGS) $(CFLAGS) \
+ 	      $(RPCSECGSS_CFLAGS) $(KRBCFLAGS) $(GSSAPI_CFLAGS)
