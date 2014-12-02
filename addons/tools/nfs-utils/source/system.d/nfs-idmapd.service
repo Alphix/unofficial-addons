@@ -1,0 +1,19 @@
+[Unit]
+Description=NFSv4 ID-name mapping service
+Conflicts=umount.target
+Requires=var-lib-nfs-rpc_pipefs.mount
+After=var-lib-nfs-rpc_pipefs.mount
+Before=remote-fs-pre.target
+Wants=remote-fs-pre.target
+
+ConditionPathExists=/storage/.config/nfs/idmapd.conf
+
+[Service]
+Type=forking
+Environment=LD_LIBRARY_PATH=/storage/.kodi/addons/tools.nfs-utils/lib
+WorkingDirectory=/storage/.kodi/addons/tools.nfs-utils/sbin
+ExecStart=/storage/.kodi/addons/tools.nfs-utils/sbin/rpc.idmapd -c /storage/.config/nfs/idmapd.conf
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=remote-fs.target

@@ -1,0 +1,22 @@
+[Unit]
+Description=RPC security service for NFS client and server
+DefaultDependencies=no
+Conflicts=umount.target
+Requires=var-lib-nfs-rpc_pipefs.mount
+After=var-lib-nfs-rpc_pipefs.mount
+Requires=network-online.service
+After=network-online.service
+
+ConditionPathExists=/storage/.config/nfs/krb5.keytab
+ConditionPathExists=/storage/.config/nfs/krb5.conf
+
+[Service]
+Type=forking
+Environment=LD_LIBRARY_PATH=/storage/.kodi/addons/tools.nfs-utils/lib
+Environment=KRB5_CONFIG=/storage/.config/nfs/krb5.conf
+ExecStartPre=/sbin/modprobe -q rpcsec_gss_krb5
+ExecStart=/storage/.kodi/addons/tools.nfs-utils/sbin/rpc.gssd -k /storage/.config/nfs/krb5.keytab
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=remote-fs.target

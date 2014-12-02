@@ -25,7 +25,7 @@ PKG_SITE="http://nfs.sourceforge.net/"
 PKG_URL="https://downloads.sourceforge.net/project/nfs/nfs-utils/$PKG_VERSION/$PKG_NAME-$PKG_VERSION.tar.bz2"
 PKG_DEPENDS_TARGET="toolchain libtirpc-gssapi libevent libnfsidmap LVM2 krb5 util-linux"
 PKG_PRIORITY="optional"
-PKG_SECTION="network"
+PKG_SECTION="tools"
 PKG_SHORTDESC="nfs-utils: NFSv4 utils"
 PKG_LONGDESC="nfs-utils provides extra software to use on a NFSv4 client."
 
@@ -57,12 +57,14 @@ addon() {
 	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/sbin
 	cp -a $PKG_BUILD/.install_pkg/usr/sbin/rpc.gssd $ADDON_BUILD/$PKG_ADDON_ID/sbin
 	cp -a $PKG_BUILD/.install_pkg/usr/sbin/rpc.idmapd $ADDON_BUILD/$PKG_ADDON_ID/sbin
-	cp -a $PKG_BUILD/.install_pkg/sbin/{umount,mount}.nfs* $ADDON_BUILD/$PKG_ADDON_ID/sbin
+
+	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin
+	cp -a $PKG_BUILD/.install_pkg/sbin/{umount,mount}.nfs* $ADDON_BUILD/$PKG_ADDON_ID/bin
 
 	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib
-#	cp -a $(get_build_dir libnfsidmap)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
-#	cp -a $(get_build_dir krb5)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
-	cp -a $BUILD/libnfsidmap-0.25/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
-	cp -a $BUILD/krb5-1.13/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
+	cp -a $(get_build_dir libnfsidmap)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
+	cp -a $(get_build_dir krb5)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
+#	cp -a $BUILD/libnfsidmap-0.25/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
+#	cp -a $BUILD/krb5-1.13/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
 }
 

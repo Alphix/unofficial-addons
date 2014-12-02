@@ -15,3 +15,16 @@
 #  You should have received a copy of the GNU General Public License
 #  along with OpenELEC.  If not, see <http://www.gnu.org/licenses/>.
 ################################################################################
+
+import os
+import xbmcaddon
+import subprocess
+
+__addon__ = xbmcaddon.Addon()
+__path__  = __addon__.getAddonInfo('path')
+
+subprocess.call('chmod +x ' + __path__ + '/sbin/*', shell=True, close_fds=True)
+
+if not os.path.exists('/storage/.config/nfs'):
+	subprocess.call('cp -a ' + __path__ + '/config /storage/.config/nfs', shell=True, close_fds=True)
+
