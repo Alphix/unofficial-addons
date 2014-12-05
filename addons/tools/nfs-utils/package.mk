@@ -56,15 +56,13 @@ export LDFLAGS="$LDFLAGS -ldl -L$SYSROOT_PREFIX/opt/libtirpc-gssapi/usr/lib"
 addon() {
 	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/sbin
 	cp -a $PKG_BUILD/.install_pkg/usr/sbin/rpc.gssd $ADDON_BUILD/$PKG_ADDON_ID/sbin
-	cp -a $PKG_BUILD/.install_pkg/usr/sbin/rpc.idmapd $ADDON_BUILD/$PKG_ADDON_ID/sbin
+	cp -a $PKG_BUILD/.install_pkg/usr/sbin/nfsidmap $ADDON_BUILD/$PKG_ADDON_ID/sbin
 
 	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/bin
-	cp -a $PKG_BUILD/.install_pkg/sbin/{umount,mount}.nfs* $ADDON_BUILD/$PKG_ADDON_ID/bin
+	cp -a $PKG_BUILD/.install_pkg/sbin/mount.nfs $ADDON_BUILD/$PKG_ADDON_ID/bin
 
 	mkdir -p $ADDON_BUILD/$PKG_ADDON_ID/lib
 	cp -a $(get_build_dir libnfsidmap)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
 	cp -a $(get_build_dir krb5)/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
-#	cp -a $BUILD/libnfsidmap-0.25/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
-#	cp -a $BUILD/krb5-1.13/.install_pkg/usr/lib/* $ADDON_BUILD/$PKG_ADDON_ID/lib
 }
 

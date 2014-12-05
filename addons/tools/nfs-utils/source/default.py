@@ -24,7 +24,19 @@ __addon__ = xbmcaddon.Addon()
 __path__  = __addon__.getAddonInfo('path')
 
 subprocess.call('chmod +x ' + __path__ + '/sbin/*', shell=True, close_fds=True)
+subprocess.call('chmod +x ' + __path__ + '/bin/*', shell=True, close_fds=True)
+
+for link in ['mount.nfs4', 'umount.nfs', 'umount.nfs4']:
+	if not os.path.exists(__path__ + '/bin/' + link):
+		subprocess.call('ln -sf ' + __path__ + '/bin/mount.nfs ' + __path__ + '/bin/' + link, shell=True, close_fds=True)
 
 if not os.path.exists('/storage/.config/nfs'):
-	subprocess.call('cp -a ' + __path__ + '/config /storage/.config/nfs', shell=True, close_fds=True)
+	subprocess.call('mkdir -p /storage/.config/nfs', shell=True, close_fds=True)
+	subprocess.call('cp -a ' + __path__ + '/config/idmap.conf.example /storage/.config/nfs', shell=True, close_fds=True)
+	subprocess.call('cp -a ' + __path__ + '/config/krb5.* /storage/.config/nfs', shell=True, close_fds=True)
 
+if not os.path.exists('/storage/.config/request-key.d'):
+	subprocess.call('mkdir -p /storage/.config/request-key.d', shell=True, close_fds=True)
+
+if not os.path.exists('/storage/.config/request-key.d/id_resolver.conf'):
+	subprocess.call('cp -a ' + __path__ + '/config/id_resolver.conf /storage/.config/request-key.d', shell=True, close_fds=True)
